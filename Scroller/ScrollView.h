@@ -32,7 +32,7 @@
 @property (nonatomic, unsafe_unretained) id <ScrollViewDelegate> scrollViewDelegate;
 
 - (void) bringViewAtIndexToFront:(int)index animated:(BOOL)animated;
-- (void) addUserInList:(ABRecordRef)personRef;
+- (void) addUserView:(UserBoxView*)userBoxView;
 - (void) snapToAlbum:(BOOL)animated;
 - (void) jumpToLast:(BOOL)animated;
 @end

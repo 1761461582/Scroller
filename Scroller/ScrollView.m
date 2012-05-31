@@ -9,12 +9,16 @@
 #import "ScrollView.h"
 #import "UserBoxView.h"
 
+#define USERBOX_WIDTH 250
+#define USERBOX_HEIGHT 50
+
 @interface ScrollView (hidden)
 
 - (void) animateToIndex:(int)index  animated:(BOOL)animated;
 - (void) load;
 - (void) setup;
 - (void) playSound;
+- (void) addSubview:(UIView *)view;
 @end
 
 
@@ -215,8 +219,7 @@
 	
 }
 
--(void)addUserInList:(ABRecordRef)personRef  {
-
+- (void) addUserView:(UserBoxView*)userBoxView {
 	float ypos = 0;
 	
 	ypos = currentSize.height /2.4;
@@ -224,38 +227,18 @@
 	if (totalViews > 0) {
 		ypos  += totalViews * 50 ;
 	}
+    
+    [userBoxView setFrame:CGRectMake(70, ypos, USERBOX_WIDTH, USERBOX_HEIGHT)];
+    [userBoxView arrangeViews];
+     
+	[views addObject:userBoxView];
 	
-	UserBoxView* boxView = [[UserBoxView alloc] initWithFrame:CGRectMake(70, ypos, 250, 50)];
-	[boxView.userImageView setImage:[UIImage imageNamed:@"defaultPersonImage.png"]];
-    boxView.personRecordRefID = ABRecordGetRecordID(personRef);
-    
-    
-	
-    NSString* firstName = (__bridge_transfer NSString*) ABRecordCopyValue(personRef, kABPersonFirstNameProperty);
-    NSString* lastName = (__bridge_transfer NSString*) ABRecordCopyValue(personRef, kABPersonLastNameProperty);
-    
-    CFDataRef image = ABPersonCopyImageDataWithFormat(personRef, kABPersonImageFormatThumbnail);
+	[self addSubview:userBoxView];
+	ypos  = ypos + 50 + (currentSize.height/2.2);
 
-    NSData* imageData = (__bridge_transfer NSData*)image;
-    
-    //CFRelease(image);
-    [boxView.displayTextLabel setText:[NSString stringWithFormat:@"%@ %@",firstName,(lastName.length>0 ? lastName : @"")]];
-	if (imageData != nil) {
-		[boxView.userImageView setImage:[UIImage imageWithData:imageData]];
-	}else {
-        [boxView.userImageView setImage:[UIImage imageNamed:@"userdefault.jpg"]];
-    }
-	
-	//[boxView.unreadMsgLabel setText:[NSString stringWithFormat:@" %d ",[xmppUserObject.unreadMessages intValue]]];
-	[views addObject:boxView];
-	
-	[self addSubview:boxView];
-	ypos  = ypos + 50 ;
-    //RELEASE_SAFELY(boxView);
-	
-	ypos = ypos + (currentSize.height/2.2);
 	totalViews = [views count];
 	self.contentSize = CGSizeMake(currentSize.width, ypos);
+
 }
 
 -(void)jumpToLast:(BOOL)animated {

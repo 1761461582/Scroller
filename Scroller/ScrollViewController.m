@@ -20,7 +20,7 @@
     
     self.title = @"Scroller";
     
-    [self.view setBackgroundColor:[UIColor grayColor]];
+    [self.view setBackgroundColor:[UIColor darkGrayColor]];
 	self.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     
     UIBarButtonItem* addContactBarButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addNewContact:)];
@@ -38,7 +38,31 @@
     
     for (id per in peopleArray) {
         ABRecordRef person = (__bridge ABRecordRef)per;
-        [scrollView addUserInList:person];
+        
+        NSString* firstName = (__bridge_transfer NSString*) ABRecordCopyValue(person, kABPersonFirstNameProperty);
+        NSString* lastName = (__bridge_transfer NSString*) ABRecordCopyValue(person, kABPersonLastNameProperty);
+        CFDataRef image = ABPersonCopyImageDataWithFormat(person, kABPersonImageFormatThumbnail);
+        NSData* imageData = (__bridge_transfer NSData*)image;
+
+        UIImage* imageObj = nil;
+        
+        if (imageData) {
+            imageObj = [UIImage imageWithData:imageData];
+        }
+        
+        UserBoxView* boxView = [[UserBoxView alloc] init];
+        [boxView.userImageView setImage:[UIImage imageNamed:@"defaultPersonImage.png"]];
+        
+        [boxView.displayTextLabel setText:[NSString stringWithFormat:@"%@ %@",firstName,(lastName.length>0 ? lastName : @"")]];
+        if (imageObj != nil) {
+            [boxView.userImageView setImage:imageObj];
+        }else {
+            [boxView.userImageView setImage:[UIImage imageNamed:@"userdefault.jpg"]];
+        }
+        
+        [boxView.badgeLabel setText:[NSString stringWithFormat:@" %d ",1]];
+
+        [scrollView addUserView:boxView];
     }
     CFRelease(addressBook);
     
@@ -68,8 +92,33 @@
 - (void)newPersonViewController:(ABNewPersonViewController *)newPersonViewController didCompleteWithNewPerson:(ABRecordRef)person
 {
 	[self dismissModalViewControllerAnimated:YES];
+
     if (person) {
-        [scrollView addUserInList:person];
+        NSString* firstName = (__bridge_transfer NSString*) ABRecordCopyValue(person, kABPersonFirstNameProperty);
+        NSString* lastName = (__bridge_transfer NSString*) ABRecordCopyValue(person, kABPersonLastNameProperty);
+        CFDataRef image = ABPersonCopyImageDataWithFormat(person, kABPersonImageFormatThumbnail);
+        NSData* imageData = (__bridge_transfer NSData*)image;
+        
+        UIImage* imageObj = nil;
+        
+        if (imageData) {
+            imageObj = [UIImage imageWithData:imageData];
+        }
+        
+        UserBoxView* boxView = [[UserBoxView alloc] init];
+        [boxView.userImageView setImage:[UIImage imageNamed:@"defaultPersonImage.png"]];
+        
+        [boxView.displayTextLabel setText:[NSString stringWithFormat:@"%@ %@",firstName,(lastName.length>0 ? lastName : @"")]];
+        if (imageObj != nil) {
+            [boxView.userImageView setImage:imageObj];
+        }else {
+            [boxView.userImageView setImage:[UIImage imageNamed:@"userdefault.jpg"]];
+        }
+        
+        [boxView.badgeLabel setText:[NSString stringWithFormat:@" %d ",1]];
+        
+        [scrollView addUserView:boxView];
+
         [scrollView jumpToLast:YES];
     }
     
@@ -77,15 +126,7 @@
 
 - (void) selectedView:(UserBoxView*)selectedview {
     
-    ABAddressBookRef addressBook = ABAddressBookCreate();
-    
-    ABRecordRef personRecordRef = ABAddressBookGetPersonWithRecordID(addressBook,selectedview.personRecordRefID);
-    
-    NSString* firstName = (__bridge_transfer NSString*)ABRecordCopyValue(personRecordRef, kABPersonFirstNameProperty);
-    
-    CFRelease(addressBook);
-
-    UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:@"Clicked !!" message:[NSString stringWithFormat:@"You Clicked %@ !",firstName] delegate:nil cancelButtonTitle:@"Cancel" otherButtonTitles:nil, nil];
+    UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:@"Clicked !!" message:[NSString stringWithFormat:@"You Clicked %@ !",selectedview.displayTextLabel.text] delegate:nil cancelButtonTitle:@"Cancel" otherButtonTitles:nil, nil];
     [alertView show];
     
 }

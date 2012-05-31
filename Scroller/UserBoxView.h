@@ -13,14 +13,14 @@
 
 	UIImageView* _userImageView;
 	UILabel* _displayTextLabel;
-//	UILabel* _unreadMsgLabel;
+	UILabel* _badgeLabel;
 	
 }
 
 @property (nonatomic,retain) UIImageView* userImageView;
 @property (nonatomic,retain) UILabel* displayTextLabel;
-@property (nonatomic,assign) NSInteger personRecordRefID;
-//@property (nonatomic,retain) UILabel* unreadMsgLabel;
+@property (nonatomic,retain) UILabel* badgeLabel;
 
+-(void)arrangeViews;
 
 @end
