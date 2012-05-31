@@ -18,7 +18,6 @@
 - (void) load;
 - (void) setup;
 - (void) playSound;
-- (void) addSubview:(UIView *)view;
 @end
 
 
