@@ -60,7 +60,7 @@
             [boxView.userImageView setImage:[UIImage imageNamed:@"userdefault.jpg"]];
         }
         
-        [boxView.badgeLabel setText:[NSString stringWithFormat:@" %d ",1]];
+        //[boxView.badgeLabel setText:[NSString stringWithFormat:@" %d ",1]];
 
         [scrollView addUserView:boxView];
     }
