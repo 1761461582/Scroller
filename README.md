@@ -3,7 +3,7 @@ Scroller
 
 To view Scroller in action, add some contacts in your AddressBook.
 
-[![](http://static.raweng.com/mobile/scroller/scroller.png)](http://static.raweng.com/mobile/scroller/scroller.png)
+[![](http://static.raweng.com/mobile/scroller/scroller1.png)](http://static.raweng.com/mobile/scroller/scroller1.png)
 
 
 Note: 
