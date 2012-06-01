@@ -118,6 +118,10 @@
 	
 }
 
+-(void)playSound {
+	//AudioServicesPlaySystemSound(soundID);
+}
+
 #pragma mark UIScrollView Delegate
 - (void) scrollViewDidScroll:(UIScrollView *)scrollView{
     	
@@ -158,20 +162,6 @@
 	}
 }
 
-- (void) snapToAlbum:(BOOL)animated{
-	
-	if (currentIndex < totalViews) {
-		UIView *v = [views objectAtIndex:currentIndex];
-		
-		if((NSObject*)v!=[NSNull null]) {
-			[self setContentOffset:CGPointMake(0, (v.center.y  - (currentSize.height/2.2))) animated:animated];
-
-            [self playSound];
-		}
-	}
-	
-}
-
 #pragma mark Touch Events
 - (void) touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
 	UITouch *touch = [touches anyObject];
@@ -199,10 +189,7 @@
 	if(currentTouch!= nil) currentTouch = nil;
 }
 
-////////////////////////////////////////////////////////////////
-// public method
-////////////////////////////////////////////////////////////////
-
+#pragma mark Public Methods
 - (void) bringViewAtIndexToFront:(int)index animated:(BOOL)animated{
     if(index == currentIndex) return;
 
@@ -214,6 +201,20 @@
 		[self animateToIndex:index animated:animated];
 	}else {
 		return;
+	}
+	
+}
+
+- (void) snapToAlbum:(BOOL)animated{
+	
+	if (currentIndex < totalViews) {
+		UIView *v = [views objectAtIndex:currentIndex];
+		
+		if((NSObject*)v!=[NSNull null]) {
+			[self setContentOffset:CGPointMake(0, (v.center.y  - (currentSize.height/2.2))) animated:animated];
+            
+            [self playSound];
+		}
 	}
 	
 }
@@ -243,10 +244,6 @@
 -(void)jumpToLast:(BOOL)animated {
     int lastIndex = totalViews - 1 ;
     [self bringViewAtIndexToFront:lastIndex animated:animated];
-}
-
--(void)playSound {
-	AudioServicesPlaySystemSound(soundID);
 }
 
 - (void) dealloc {	
