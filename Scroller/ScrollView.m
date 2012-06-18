@@ -55,8 +55,8 @@
 	views = [[NSMutableArray alloc] init];
 	
 	currentIndex = -1;
-	coverSize = CGSizeMake(224, 200);
-	spaceFromCurrent = coverSize.height/2.4;
+	coverSize = CGSizeMake(250, 50);
+	spaceFromCurrent = (coverSize.width/2) - 45;
 	[self setup];
 }
 
@@ -73,53 +73,79 @@
 
 - (void) animateToIndex:(int)index animated:(BOOL)animated {
 	
-	NSString *string = @"";
+//	NSString *string = @"";
+    float speed = 0;
 	if(velocity> 200) animated = NO;
 	
 	if(animated){
-		float speed = 0.21;
+		speed = 0.20;
 		if(velocity>80)speed=0.05;
-		[UIView beginAnimations:string context:nil];
+/*		[UIView beginAnimations:string context:nil];
 		[UIView setAnimationDuration:speed];
-		[UIView setAnimationCurve:UIViewAnimationCurveEaseIn];
-		[UIView setAnimationBeginsFromCurrentState:YES];
+		[UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
+		[UIView setAnimationBeginsFromCurrentState:NO]; */
 	}
-
+    
     int currentViewIndex = 0;
 	for(UIView *v in views){
-		v.alpha = 1;
+		//v.alpha = 0;
 		if (currentViewIndex == index) {
-			[v setBackgroundColor:RGBACOLOR(255,255,255,1)];
-			v.layer.transform = CATransform3DMakeTranslation(-(spaceFromCurrent-30), 0, -300);
+            v.alpha = 1;
+            [v setBackgroundColor:RGBACOLOR(255,255,255,1)];
+            [UIView animateWithDuration:speed delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+                v.layer.transform = CATransform3DMakeTranslation(-(spaceFromCurrent-30), 0, -300);
+            } completion:^(BOOL finished) {
+                //
+            }];
 		}else {
 			[v setBackgroundColor:RGBACOLOR(255,255,255,0.8)];
 			if (currentViewIndex == index-1 || currentViewIndex == index + 1) {
-				v.alpha = 0.9;
-				v.layer.transform = CATransform3DConcat(CATransform3DMakeScale(0.8, 0.8, 1),CATransform3DMakeTranslation(-(spaceFromCurrent-70), 0, -300));
+                [UIView animateWithDuration:speed delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+                    v.alpha = 0.9;
+                    v.layer.transform = CATransform3DConcat(CATransform3DMakeScale(0.8, 0.8, 1),CATransform3DMakeTranslation(-(spaceFromCurrent-70), 0, -300));
+                } completion:^(BOOL finished) {
+                    //
+                }];
 			}else if (currentViewIndex == index-2 || currentViewIndex == index + 2) {
-				v.alpha = 0.7;
-				v.layer.transform = CATransform3DConcat(CATransform3DMakeScale(0.7, 0.7, 1),CATransform3DMakeTranslation(-(spaceFromCurrent-90), (currentViewIndex > index? -8:8), -300));
+                [UIView animateWithDuration:speed delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+                    v.alpha = 0.7;
+                    v.layer.transform = CATransform3DConcat(CATransform3DMakeScale(0.7, 0.7, 1),CATransform3DMakeTranslation(-(spaceFromCurrent-90), (currentViewIndex > index? -8:8), -300));
+                } completion:^(BOOL finished) {
+                    //
+                }];
+
 			}else if (currentViewIndex == index-3 || currentViewIndex == index + 3) {
-				v.alpha = 0.5;
-				v.layer.transform = CATransform3DConcat(CATransform3DMakeScale(0.6, 0.6, 1),CATransform3DMakeTranslation(-(spaceFromCurrent-110), (currentViewIndex > index? -22:22), -300));
-			}else if (currentViewIndex == index-4 || currentViewIndex == index + 4) {
-				v.alpha = 0;
-				v.layer.transform = CATransform3DConcat(CATransform3DMakeScale(0.6, 0.6, 1),CATransform3DMakeTranslation(-(spaceFromCurrent-130), (currentViewIndex > index? -38:38), -300));
-			}else{
-				v.alpha = 0;
-				v.layer.transform = CATransform3DConcat(CATransform3DMakeScale(0.6, 0.6, 1),CATransform3DMakeTranslation(-(spaceFromCurrent-300), (currentViewIndex > index? -8:8), -300));
+
+                [UIView animateWithDuration:speed delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+                    v.alpha = 0.5;
+                    v.layer.transform = CATransform3DConcat(CATransform3DMakeScale(0.6, 0.6, 1),CATransform3DMakeTranslation(-(spaceFromCurrent-110), (currentViewIndex > index? -22:22), -300));
+                } completion:^(BOOL finished) {
+                    //
+                }];
+
+				
+			}else {
+
+                [UIView animateWithDuration:speed delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+                    v.alpha = 0;
+                    v.layer.transform = CATransform3DConcat(CATransform3DMakeScale(0.6, 0.6, 1),CATransform3DMakeTranslation(-(spaceFromCurrent-130), (currentViewIndex > index? -38:38), -300));
+                } completion:^(BOOL finished) {
+                    //
+                }];
+
+				
 			}
 		}
         currentViewIndex++;
 	}
-	if(animated) [UIView commitAnimations];
+//	if(animated) [UIView commitAnimations];
     
     [self playSound];
 	
 }
 
 -(void)playSound {
-	//AudioServicesPlaySystemSound(soundID);
+	AudioServicesPlaySystemSound(soundID);
 }
 
 #pragma mark UIScrollView Delegate
@@ -131,7 +157,7 @@
 	pos = yOffset;
 	
 	CGFloat num = totalViews;
-	CGFloat per = (scrollView.contentOffset.y) / (self.contentSize.height - currentSize.height);
+	CGFloat per = (scrollView.contentOffset.y) / (self.contentSize.height - (currentSize.height));
 	CGFloat ind = num * per;
 	CGFloat mi = ind / (totalViews/2);
 	
@@ -145,8 +171,9 @@
 
 	currentIndex = index;
 	
-	if(velocity < 180)
+	if(velocity < 180) {
 		[self animateToIndex:index animated:YES];
+    }
 
 }
 
